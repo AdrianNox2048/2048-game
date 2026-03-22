@@ -6,7 +6,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>Nox2048 v.g18</title>
+<title>Nox2048 v.g19</title>
 
 <style>
 
@@ -47,22 +47,21 @@ height:min(92vw,520px);
 margin:20px auto;
 background:#d9e9f3;
 border-radius:12px;
-padding:2%;
-box-sizing:border-box;
+overflow:hidden;
 }
 
 .cell{
 position:absolute;
-width:22%;
-height:22%;
+width:24%;
+height:24%;
 background:#f0f7fb;
 border-radius:8px;
 }
 
 .tile{
 position:absolute;
-width:22%;
-height:22%;
+width:24%;
+height:24%;
 border-radius:12px;
 display:flex;
 flex-direction:column;
@@ -94,11 +93,11 @@ animation:new .5s ease;
 }
 
 .emoji{
-font-size:4.5vw;
+font-size:6vw;
 }
 
 .num{
-font-size:2.2vw;
+font-size:3vw;
 }
 
 .version{
@@ -123,14 +122,13 @@ font-size:12px;
 
 <div id="board"></div>
 
-<div class="version">v.g18</div>
+<div class="version">v.g19</div>
 
 <script>
 
 const SIZE=4
 
 let board=[]
-let tiles=[]
 let score=0
 let best=localStorage.getItem("best2048")||0
 let locked=false
