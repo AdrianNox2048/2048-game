@@ -2,530 +2,329 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Nox2048 v.g17</title>
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Nox2048 v.g18</title>
 
 <style>
+
 body{
-    background:#f6fbff;
-    text-align:center;
-    font-family:Arial, sans-serif;
-    margin-top:30px;
-    user-select:none;
-    touch-action:none;
+background:#f6fbff;
+text-align:center;
+font-family:Arial;
+margin:0;
+user-select:none;
 }
 
 h1{
-    color:#5a9bd5;
-    margin:0;
-    font-size:42px;
+color:#5a9bd5;
+margin-top:20px;
+font-size:42px;
 }
 
 .score-wrap{
-    margin-top:8px;
-    display:flex;
-    justify-content:center;
-    gap:20px;
-    font-weight:bold;
-    color:#5a9bd5;
+margin-top:8px;
+display:flex;
+justify-content:center;
+gap:20px;
+font-weight:bold;
+color:#5a9bd5;
 }
 
 .score-box{
-    background:white;
-    padding:6px 14px;
-    border-radius:8px;
-    box-shadow:0 3px 8px rgba(0,0,0,0.05);
+background:white;
+padding:6px 14px;
+border-radius:8px;
+box-shadow:0 3px 8px rgba(0,0,0,0.05);
 }
 
 #board{
-    position:relative;
-    width:340px;
-    height:340px;
-    margin:20px auto;
-    background:#d9e9f3;
-    border-radius:12px;
-    padding:10px;
-    overflow:hidden;
+position:relative;
+width:min(92vw,520px);
+height:min(92vw,520px);
+margin:20px auto;
+background:#d9e9f3;
+border-radius:12px;
+padding:2%;
+box-sizing:border-box;
 }
 
 .cell{
-    position:absolute;
-    width:75px;
-    height:75px;
-    background:#f0f7fb;
-    border-radius:8px;
+position:absolute;
+width:22%;
+height:22%;
+background:#f0f7fb;
+border-radius:8px;
 }
 
 .tile{
-    position:absolute;
-    width:75px;
-    height:75px;
-    border-radius:12px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    font-weight:bold;
-    left:0;
-    top:0;
-    transform:translate(0,0);
-    transition:transform 1s cubic-bezier(.12,.72,.18,1);
-    box-shadow:0 4px 8px rgba(0,0,0,0.08);
-    z-index:2;
-}
-
-.tile-emoji{
-    font-size:28px;
-    line-height:1;
-}
-
-.tile-num{
-    font-size:14px;
-    margin-top:4px;
-    line-height:1;
+position:absolute;
+width:22%;
+height:22%;
+border-radius:12px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+font-weight:bold;
+transition:transform 1s cubic-bezier(.12,.72,.18,1);
 }
 
 .tile.merge{
-    animation:mergeBounce .45s cubic-bezier(.34,1.56,.64,1);
+animation:merge .45s cubic-bezier(.34,1.56,.64,1);
 }
 
 .tile.new{
-    animation:newSparkle .6s ease;
+animation:new .5s ease;
 }
 
-@keyframes mergeBounce{
-    0%{transform:translate(var(--tx), var(--ty)) scale(1);}
-    40%{transform:translate(var(--tx), var(--ty)) scale(1.25);}
-    70%{transform:translate(var(--tx), var(--ty)) scale(.95);}
-    100%{transform:translate(var(--tx), var(--ty)) scale(1);}
+@keyframes new{
+0%{transform:scale(.4)}
+50%{transform:scale(1.15)}
+100%{transform:scale(1)}
 }
 
-@keyframes newSparkle{
-    0%{transform:translate(var(--tx), var(--ty)) scale(.45); opacity:.45;}
-    40%{transform:translate(var(--tx), var(--ty)) scale(1.08); opacity:1;}
-    60%{filter:brightness(1.28);}
-    100%{transform:translate(var(--tx), var(--ty)) scale(1); opacity:1;}
+@keyframes merge{
+0%{transform:scale(1)}
+40%{transform:scale(1.25)}
+70%{transform:scale(.95)}
+100%{transform:scale(1)}
+}
+
+.emoji{
+font-size:4.5vw;
+}
+
+.num{
+font-size:2.2vw;
 }
 
 .version{
-    position:fixed;
-    right:10px;
-    bottom:10px;
-    color:#bcd4e6;
-    font-size:12px;
-    font-weight:bold;
+position:fixed;
+right:10px;
+bottom:10px;
+color:#bcd4e6;
+font-size:12px;
 }
 
-.gameover{
-    position:absolute;
-    inset:10px;
-    background:rgba(255,255,255,.78);
-    border-radius:12px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    z-index:10;
-    color:#4d79a6;
-    font-weight:bold;
-    backdrop-filter:blur(2px);
-}
-
-.gameover button{
-    margin-top:12px;
-    border:none;
-    background:#5a9bd5;
-    color:white;
-    padding:10px 16px;
-    border-radius:8px;
-    font-weight:bold;
-    cursor:pointer;
-}
 </style>
 </head>
+
 <body>
 
 <h1>Nox2048</h1>
 
 <div class="score-wrap">
-    <div class="score-box">Score <span id="score">0</span></div>
-    <div class="score-box">Best <span id="best">0</span></div>
+<div class="score-box">Score <span id="score">0</span></div>
+<div class="score-box">Best <span id="best">0</span></div>
 </div>
 
 <div id="board"></div>
-<div class="version">v.g17</div>
+
+<div class="version">v.g18</div>
 
 <script>
-const SIZE = 4;
-const MOVE_DURATION = 1000;
 
-const boardEl = document.getElementById("board");
-const scoreEl = document.getElementById("score");
-const bestEl = document.getElementById("best");
+const SIZE=4
 
-let grid = [];
-let score = 0;
-let best = Number(localStorage.getItem("best2048") || 0);
-let nextId = 1;
-let locked = false;
-let startX = 0;
-let startY = 0;
+let board=[]
+let tiles=[]
+let score=0
+let best=localStorage.getItem("best2048")||0
+let locked=false
 
-bestEl.innerText = best;
+document.getElementById("best").innerText=best
 
 function emoji(v){
-    return {
-        2:"🐹", 4:"🐭", 8:"🐻", 16:"🐱",
-        32:"🐶", 64:"🐼", 128:"🦊", 256:"🐯",
-        512:"🐨", 1024:"🐮", 2048:"👑"
-    }[v] || "🐹";
+return{
+2:"🐹",4:"🐭",8:"🐻",16:"🐱",
+32:"🐶",64:"🐼",128:"🦊",
+256:"🐯",512:"🐨",
+1024:"🐮",2048:"👑"
+}[v]
 }
 
 function color(v){
-    return {
-        2:{bg:"#fff3d6", fg:"#7a5a00"},
-        4:{bg:"#f1f1f1", fg:"#555"},
-        8:{bg:"#d2a679", fg:"#fff"},
-        16:{bg:"#ffd6a5", fg:"#7a3b00"},
-        32:{bg:"#cde7ff", fg:"#004a8f"},
-        64:{bg:"#ffffff", fg:"#000"},
-        128:{bg:"#ffb4a2", fg:"#7a1e00"},
-        256:{bg:"#ffe066", fg:"#5a4500"},
-        512:{bg:"#d9d9d9", fg:"#333"},
-        1024:{bg:"#fff0cc", fg:"#6b5200"},
-        2048:{bg:"#ffd700", fg:"#7a5a00"}
-    }[v] || {bg:"#ffd700", fg:"#7a5a00"};
+return{
+2:"#fff3d6",
+4:"#f1f1f1",
+8:"#d2a679",
+16:"#ffd6a5",
+32:"#cde7ff",
+64:"#ffffff",
+128:"#ffb4a2",
+256:"#ffe066",
+512:"#d9d9d9",
+1024:"#fff0cc",
+2048:"#ffd700"
+}[v]
 }
 
-function posFromRowCol(row, col){
-    return {
-        x: col * 85 + 10,
-        y: row * 85 + 10
-    };
+function pos(i){
+return{
+x:(i%4)*25,
+y:Math.floor(i/4)*25
 }
-
-function emptyGrid(){
-    return Array.from({length: SIZE}, () => Array(SIZE).fill(null));
-}
-
-function buildBackground(){
-    boardEl.innerHTML = "";
-    for(let r=0; r<SIZE; r++){
-        for(let c=0; c<SIZE; c++){
-            const cell = document.createElement("div");
-            cell.className = "cell";
-            const p = posFromRowCol(r, c);
-            cell.style.left = p.x + "px";
-            cell.style.top = p.y + "px";
-            boardEl.appendChild(cell);
-        }
-    }
-}
-
-function createTile(value, row, col, opts = {}){
-    const tile = {
-        id: nextId++,
-        value,
-        row,
-        col,
-        isNew: !!opts.isNew,
-        justMerged: !!opts.justMerged
-    };
-
-    const el = document.createElement("div");
-    el.className = "tile";
-    const theme = color(value);
-    el.style.background = theme.bg;
-    el.style.color = theme.fg;
-    el.innerHTML = `
-        <div class="tile-emoji">${emoji(value)}</div>
-        <div class="tile-num">${value}</div>
-    `;
-    tile.el = el;
-
-    boardEl.appendChild(el);
-    placeTileElement(tile);
-
-    if(tile.isNew) el.classList.add("new");
-    if(tile.justMerged) el.classList.add("merge");
-
-    return tile;
-}
-
-function placeTileElement(tile){
-    const p = posFromRowCol(tile.row, tile.col);
-    tile.el.style.setProperty("--tx", `${p.x}px`);
-    tile.el.style.setProperty("--ty", `${p.y}px`);
-    tile.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
-}
-
-function refreshScore(){
-    scoreEl.innerText = score;
-    if(score > best){
-        best = score;
-        localStorage.setItem("best2048", String(best));
-    }
-    bestEl.innerText = best;
-}
-
-function listTiles(){
-    const arr = [];
-    for(let r=0; r<SIZE; r++){
-        for(let c=0; c<SIZE; c++){
-            if(grid[r][c]) arr.push(grid[r][c]);
-        }
-    }
-    return arr;
-}
-
-function randomEmptyCell(g){
-    const empties = [];
-    for(let r=0; r<SIZE; r++){
-        for(let c=0; c<SIZE; c++){
-            if(!g[r][c]) empties.push({r, c});
-        }
-    }
-    if(!empties.length) return null;
-    return empties[Math.floor(Math.random() * empties.length)];
-}
-
-function spawnRandomTile(g){
-    const spot = randomEmptyCell(g);
-    if(!spot) return null;
-    const value = Math.random() < 0.9 ? 2 : 4;
-    const tile = createTile(value, spot.r, spot.c, {isNew:true});
-    g[spot.r][spot.c] = tile;
-    return tile;
 }
 
 function init(){
-    locked = false;
-    score = 0;
-    nextId = 1;
-    buildBackground();
-    grid = emptyGrid();
-    spawnRandomTile(grid);
-    spawnRandomTile(grid);
-    refreshScore();
-    removeGameOver();
+
+board=new Array(16).fill(0)
+score=0
+
+const b=document.getElementById("board")
+b.innerHTML=""
+
+for(let i=0;i<16;i++){
+
+let c=document.createElement("div")
+c.className="cell"
+
+let p=pos(i)
+
+c.style.left=p.x+"%"
+c.style.top=p.y+"%"
+
+b.appendChild(c)
 }
 
-function removeGameOver(){
-    const old = document.querySelector(".gameover");
-    if(old) old.remove();
+add()
+add()
+draw()
+
 }
 
-function showGameOver(){
-    if(document.querySelector(".gameover")) return;
-    const layer = document.createElement("div");
-    layer.className = "gameover";
-    layer.innerHTML = `
-        <div>Game Over</div>
-        <button onclick="init()">다시 시작</button>
-    `;
-    boardEl.appendChild(layer);
+function add(){
+
+let empty=[]
+
+board.forEach((v,i)=>{
+if(v==0) empty.push(i)
+})
+
+if(!empty.length) return
+
+let i=empty[Math.floor(Math.random()*empty.length)]
+
+board[i]=Math.random()<.9?2:4
+
 }
 
-function canMove(){
-    for(let r=0; r<SIZE; r++){
-        for(let c=0; c<SIZE; c++){
-            const t = grid[r][c];
-            if(!t) return true;
-            if(r < SIZE - 1 && grid[r+1][c] && grid[r+1][c].value === t.value) return true;
-            if(c < SIZE - 1 && grid[r][c+1] && grid[r][c+1].value === t.value) return true;
-        }
-    }
-    return false;
+function draw(){
+
+document.querySelectorAll(".tile").forEach(t=>t.remove())
+
+board.forEach((v,i)=>{
+
+if(!v) return
+
+let t=document.createElement("div")
+
+t.className="tile"
+t.style.background=color(v)
+
+t.innerHTML=
+`<div class="emoji">${emoji(v)}</div>
+<div class="num">${v}</div>`
+
+let p=pos(i)
+
+t.style.transform=
+`translate(${p.x}%,${p.y}%)`
+
+document.getElementById("board").appendChild(t)
+
+})
+
+document.getElementById("score").innerText=score
+
+if(score>best){
+best=score
+localStorage.setItem("best2048",best)
+document.getElementById("best").innerText=best
 }
 
-function getLine(dir, fixedIndex){
-    const cells = [];
-    if(dir === "L" || dir === "R"){
-        for(let c=0; c<SIZE; c++){
-            cells.push({r: fixedIndex, c});
-        }
-        if(dir === "R") cells.reverse();
-    }else{
-        for(let r=0; r<SIZE; r++){
-            cells.push({r, c: fixedIndex});
-        }
-        if(dir === "D") cells.reverse();
-    }
-    return cells;
 }
 
-function simulateMove(dir){
-    const oldGrid = grid;
-    const newGrid = emptyGrid();
-    const movingTiles = [];
-    const removedTiles = [];
-    const mergedResultIds = new Set();
-    let moved = false;
-    let gained = 0;
+function move(dir){
 
-    for(let i=0; i<SIZE; i++){
-        const line = getLine(dir, i);
-        const existing = line
-            .map(pos => oldGrid[pos.r][pos.c])
-            .filter(Boolean);
+if(locked) return
+locked=true
 
-        let target = 0;
-        let pending = null;
+let moved=false
 
-        for(const tile of existing){
-            if(!pending){
-                pending = {tile};
-            }else if(pending.tile.value === tile.value){
-                const dest = line[target];
-                pending.tile._nextRow = dest.r;
-                pending.tile._nextCol = dest.c;
-                tile._nextRow = dest.r;
-                tile._nextCol = dest.c;
+for(let i=0;i<4;i++){
 
-                movingTiles.push(pending.tile, tile);
+let arr=[]
+let index=[]
 
-                const mergedTile = createTile(tile.value * 2, dest.r, dest.c, {justMerged:true});
-                mergedTile.el.style.opacity = "0";
-                mergedTile.el.style.pointerEvents = "none";
-
-                newGrid[dest.r][dest.c] = mergedTile;
-                mergedResultIds.add(mergedTile.id);
-                removedTiles.push(pending.tile, tile);
-
-                gained += tile.value * 2;
-                target++;
-                pending = null;
-
-                if(pending?.tile?.row !== dest.r || pending?.tile?.col !== dest.c) moved = true;
-                moved = true;
-            }else{
-                const dest = line[target];
-                pending.tile._nextRow = dest.r;
-                pending.tile._nextCol = dest.c;
-                movingTiles.push(pending.tile);
-
-                if(pending.tile.row !== dest.r || pending.tile.col !== dest.c) moved = true;
-                newGrid[dest.r][dest.c] = pending.tile;
-                target++;
-
-                pending = {tile};
-            }
-        }
-
-        if(pending){
-            const dest = line[target];
-            pending.tile._nextRow = dest.r;
-            pending.tile._nextCol = dest.c;
-            movingTiles.push(pending.tile);
-
-            if(pending.tile.row !== dest.r || pending.tile.col !== dest.c) moved = true;
-            newGrid[dest.r][dest.c] = pending.tile;
-        }
-    }
-
-    const uniqueMoving = [...new Map(movingTiles.map(t => [t.id, t])).values()];
-    return {oldGrid, newGrid, uniqueMoving, removedTiles, mergedResultIds, moved, gained};
+for(let j=0;j<4;j++){
+let k=(dir=="L"||dir=="R")?i*4+j:j*4+i
+arr.push(board[k])
+index.push(k)
 }
 
-function runMove(dir){
-    if(locked) return;
-
-    const sim = simulateMove(dir);
-    if(!sim.moved){
-        return;
-    }
-
-    locked = true;
-    score += sim.gained;
-    refreshScore();
-
-    for(const tile of sim.uniqueMoving){
-        const p = posFromRowCol(tile._nextRow, tile._nextCol);
-        tile.el.style.setProperty("--tx", `${p.x}px`);
-        tile.el.style.setProperty("--ty", `${p.y}px`);
-        tile.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
-    }
-
-    setTimeout(() => {
-        // 이동 끝난 뒤 기존 타일 정리
-        for(const t of listTiles()){
-            if(t.el && t.el.parentNode) t.el.remove();
-        }
-
-        // 새 grid를 기준으로 DOM 재구성
-        grid = emptyGrid();
-
-        for(let r=0; r<SIZE; r++){
-            for(let c=0; c<SIZE; c++){
-                const tile = sim.newGrid[r][c];
-                if(!tile) continue;
-
-                tile.row = r;
-                tile.col = c;
-                tile.isNew = false;
-
-                // merge 결과 타일은 숨겨놨던 것을 정상 표시
-                if(!tile.el.parentNode){
-                    boardEl.appendChild(tile.el);
-                }
-                tile.el.style.opacity = "1";
-                tile.el.style.pointerEvents = "auto";
-
-                // 애니메이션 클래스 재적용 안정화
-                tile.el.classList.remove("merge", "new");
-                placeTileElement(tile);
-                if(sim.mergedResultIds.has(tile.id)){
-                    void tile.el.offsetWidth;
-                    tile.el.classList.add("merge");
-                }
-
-                grid[r][c] = tile;
-            }
-        }
-
-        // 새 타일 생성
-        const spawned = spawnRandomTile(grid);
-        if(spawned){
-            placeTileElement(spawned);
-        }
-
-        refreshScore();
-        locked = false;
-
-        if(!canMove()){
-            showGameOver();
-        }
-    }, MOVE_DURATION);
+if(dir=="R"||dir=="D"){
+arr.reverse()
+index.reverse()
 }
 
-window.addEventListener("pointerdown", e => {
-    startX = e.clientX;
-    startY = e.clientY;
-});
+let filtered=arr.filter(v=>v)
 
-window.addEventListener("pointerup", e => {
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    const absX = Math.abs(dx);
-    const absY = Math.abs(dy);
+for(let k=0;k<filtered.length-1;k++){
+if(filtered[k]==filtered[k+1]){
+filtered[k]*=2
+score+=filtered[k]
+filtered[k+1]=0
+}
+}
 
-    if(Math.max(absX, absY) < 25) return;
+filtered=filtered.filter(v=>v)
 
-    if(absX > absY){
-        runMove(dx > 0 ? "R" : "L");
-    }else{
-        runMove(dy > 0 ? "D" : "U");
-    }
-});
+while(filtered.length<4) filtered.push(0)
 
-window.addEventListener("keydown", e => {
-    if(e.key === "ArrowLeft" || e.key === "a" || e.key === "A") runMove("L");
-    if(e.key === "ArrowRight" || e.key === "d" || e.key === "D") runMove("R");
-    if(e.key === "ArrowUp" || e.key === "w" || e.key === "W") runMove("U");
-    if(e.key === "ArrowDown" || e.key === "s" || e.key === "S") runMove("D");
-});
+if(dir=="R"||dir=="D") filtered.reverse()
 
-init();
+for(let j=0;j<4;j++){
+if(board[index[j]]!=filtered[j]) moved=true
+board[index[j]]=filtered[j]
+}
+
+}
+
+if(moved){
+add()
+draw()
+}
+
+setTimeout(()=>locked=false,1000)
+
+}
+
+let sx,sy
+
+window.addEventListener("pointerdown",e=>{
+sx=e.clientX
+sy=e.clientY
+})
+
+window.addEventListener("pointerup",e=>{
+
+let dx=e.clientX-sx
+let dy=e.clientY-sy
+
+if(Math.abs(dx)>Math.abs(dy)){
+if(Math.abs(dx)>20) move(dx>0?"R":"L")
+}else{
+if(Math.abs(dy)>20) move(dy>0?"D":"U")
+}
+
+})
+
+init()
+
 </script>
-
 </body>
 </html>
