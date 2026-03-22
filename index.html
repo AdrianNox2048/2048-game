@@ -6,7 +6,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>Nox2048 v.g20</title>
+<title>Nox2048 v.g21</title>
 
 <style>
 
@@ -16,6 +16,8 @@ text-align:center;
 font-family:Arial;
 margin:0;
 user-select:none;
+touch-action:none;
+overflow:hidden;
 }
 
 h1{
@@ -122,7 +124,7 @@ font-size:12px;
 
 <div id="board"></div>
 
-<div class="version">v.g20</div>
+<div class="version">v.g21</div>
 
 <script>
 
@@ -301,17 +303,18 @@ setTimeout(()=>locked=false,1000)
 
 }
 
-let sx,sy
+let startX=0
+let startY=0
 
-window.addEventListener("pointerdown",e=>{
-sx=e.clientX
-sy=e.clientY
-})
+document.addEventListener("touchstart",e=>{
+startX=e.touches[0].clientX
+startY=e.touches[0].clientY
+},{passive:false})
 
-window.addEventListener("pointerup",e=>{
+document.addEventListener("touchend",e=>{
 
-let dx=e.clientX-sx
-let dy=e.clientY-sy
+let dx=e.changedTouches[0].clientX-startX
+let dy=e.changedTouches[0].clientY-startY
 
 if(Math.abs(dx)>Math.abs(dy)){
 if(Math.abs(dx)>20) move(dx>0?"R":"L")
@@ -319,10 +322,11 @@ if(Math.abs(dx)>20) move(dx>0?"R":"L")
 if(Math.abs(dy)>20) move(dy>0?"D":"U")
 }
 
-})
+},{passive:false})
 
 init()
 
 </script>
+
 </body>
 </html>
