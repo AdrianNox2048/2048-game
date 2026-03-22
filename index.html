@@ -2,14 +2,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
 <title>Nox2048 v.g18</title>
 
 <style>
-
 body{
 background:#f6fbff;
 text-align:center;
@@ -49,19 +46,22 @@ max-height:420px;
 margin:15px auto;
 background:#d9e9f3;
 border-radius:12px;
-padding:10px;
-box-sizing:border-box;
+overflow:hidden;
 touch-action:none;
 }
 
 .cell{
 position:absolute;
+width:25%;
+height:25%;
 background:#f0f7fb;
 border-radius:8px;
 }
 
 .tile{
 position:absolute;
+width:25%;
+height:25%;
 border-radius:12px;
 display:flex;
 flex-direction:column;
@@ -69,7 +69,6 @@ justify-content:center;
 align-items:center;
 font-weight:bold;
 transition:transform 1s cubic-bezier(.12,.72,.18,1);
-box-shadow:0 4px 8px rgba(0,0,0,0.08);
 }
 
 .tile.merge{
@@ -93,13 +92,8 @@ animation:newpop .5s ease;
 100%{transform:scale(1)}
 }
 
-.emoji{
-font-size:28px;
-}
-
-.num{
-font-size:14px;
-}
+.emoji{font-size:24px;}
+.num{font-size:13px;}
 
 .version{
 position:fixed;
@@ -108,7 +102,6 @@ bottom:10px;
 color:#bcd4e6;
 font-size:12px;
 }
-
 </style>
 </head>
 
@@ -122,14 +115,12 @@ font-size:12px;
 </div>
 
 <div id="board"></div>
-
 <div class="version">v.g18</div>
 
 <script>
 
 const SIZE=4
 let board=[]
-let tiles=[]
 let score=0
 let best=localStorage.getItem("best2048")||0
 let locked=false
@@ -163,8 +154,8 @@ return{
 
 function pos(i){
 return{
-x:(i%4)*25,
-y:Math.floor(i/4)*25
+x:(i%4)*100,
+y:Math.floor(i/4)*100
 }
 }
 
@@ -177,7 +168,6 @@ const b=document.getElementById("board")
 b.innerHTML=""
 
 for(let i=0;i<16;i++){
-
 let c=document.createElement("div")
 c.className="cell"
 
@@ -185,8 +175,6 @@ let p=pos(i)
 
 c.style.left=p.x+"%"
 c.style.top=p.y+"%"
-c.style.width="22%"
-c.style.height="22%"
 
 b.appendChild(c)
 }
@@ -194,23 +182,17 @@ b.appendChild(c)
 add()
 add()
 draw()
-
 }
 
 function add(){
 
 let empty=[]
-
-board.forEach((v,i)=>{
-if(v==0) empty.push(i)
-})
+board.forEach((v,i)=>{if(v==0) empty.push(i)})
 
 if(!empty.length) return
 
 let i=empty[Math.floor(Math.random()*empty.length)]
-
 board[i]=Math.random()<.9?2:4
-
 }
 
 function draw(){
@@ -222,7 +204,6 @@ board.forEach((v,i)=>{
 if(!v) return
 
 let t=document.createElement("div")
-
 t.className="tile"
 t.style.background=color(v)
 
@@ -232,10 +213,7 @@ t.innerHTML=
 
 let p=pos(i)
 
-t.style.left=p.x+"%"
-t.style.top=p.y+"%"
-t.style.width="22%"
-t.style.height="22%"
+t.style.transform=`translate(${p.x}%,${p.y}%)`
 
 document.getElementById("board").appendChild(t)
 
@@ -248,7 +226,6 @@ best=score
 localStorage.setItem("best2048",best)
 document.getElementById("best").innerText=best
 }
-
 }
 
 function move(dir){
@@ -294,7 +271,6 @@ for(let j=0;j<4;j++){
 if(board[index[j]]!=filtered[j]) moved=true
 board[index[j]]=filtered[j]
 }
-
 }
 
 if(moved){
@@ -303,28 +279,25 @@ draw()
 }
 
 setTimeout(()=>locked=false,1000)
-
 }
 
-let startX=0
-let startY=0
+let sx,sy
 
 document.getElementById("board").addEventListener("touchstart",e=>{
-startX=e.touches[0].clientX
-startY=e.touches[0].clientY
+sx=e.touches[0].clientX
+sy=e.touches[0].clientY
 })
 
 document.getElementById("board").addEventListener("touchend",e=>{
 
-let dx=e.changedTouches[0].clientX-startX
-let dy=e.changedTouches[0].clientY-startY
+let dx=e.changedTouches[0].clientX-sx
+let dy=e.changedTouches[0].clientY-sy
 
 if(Math.abs(dx)>Math.abs(dy)){
 if(Math.abs(dx)>20) move(dx>0?"R":"L")
 }else{
 if(Math.abs(dy)>20) move(dy>0?"D":"U")
 }
-
 })
 
 init()
