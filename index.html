@@ -6,7 +6,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>Nox2048 v.g19</title>
+<title>Nox2048 v.g20</title>
 
 <style>
 
@@ -52,23 +52,23 @@ overflow:hidden;
 
 .cell{
 position:absolute;
-width:24%;
-height:24%;
+width:24.5%;
+height:24.5%;
 background:#f0f7fb;
 border-radius:8px;
 }
 
 .tile{
 position:absolute;
-width:24%;
-height:24%;
+width:24.5%;
+height:24.5%;
 border-radius:12px;
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
 font-weight:bold;
-transition:transform 1s cubic-bezier(.12,.72,.18,1);
+transition:all 1s cubic-bezier(.12,.72,.18,1);
 }
 
 .tile.merge{
@@ -122,7 +122,7 @@ font-size:12px;
 
 <div id="board"></div>
 
-<div class="version">v.g19</div>
+<div class="version">v.g20</div>
 
 <script>
 
@@ -229,8 +229,8 @@ t.innerHTML=
 
 let p=pos(i)
 
-t.style.transform=
-`translate(${p.x}%,${p.y}%)`
+t.style.left=p.x+"%"
+t.style.top=p.y+"%"
 
 document.getElementById("board").appendChild(t)
 
