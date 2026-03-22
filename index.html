@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 
 <meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-<title>Nox2048 v.g21</title>
+<title>Nox2048 v.g18</title>
 
 <style>
 
@@ -16,18 +16,16 @@ text-align:center;
 font-family:Arial;
 margin:0;
 user-select:none;
-touch-action:none;
-overflow:hidden;
 }
 
 h1{
 color:#5a9bd5;
-margin-top:20px;
-font-size:42px;
+margin-top:15px;
+font-size:38px;
 }
 
 .score-wrap{
-margin-top:8px;
+margin-top:5px;
 display:flex;
 justify-content:center;
 gap:20px;
@@ -44,33 +42,34 @@ box-shadow:0 3px 8px rgba(0,0,0,0.05);
 
 #board{
 position:relative;
-width:min(92vw,520px);
-height:min(92vw,520px);
-margin:20px auto;
+width:80vw;
+height:80vw;
+max-width:420px;
+max-height:420px;
+margin:15px auto;
 background:#d9e9f3;
 border-radius:12px;
-overflow:hidden;
+padding:10px;
+box-sizing:border-box;
+touch-action:none;
 }
 
 .cell{
 position:absolute;
-width:24.5%;
-height:24.5%;
 background:#f0f7fb;
 border-radius:8px;
 }
 
 .tile{
 position:absolute;
-width:24.5%;
-height:24.5%;
 border-radius:12px;
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
 font-weight:bold;
-transition:all 1s cubic-bezier(.12,.72,.18,1);
+transition:transform 1s cubic-bezier(.12,.72,.18,1);
+box-shadow:0 4px 8px rgba(0,0,0,0.08);
 }
 
 .tile.merge{
@@ -78,10 +77,10 @@ animation:merge .45s cubic-bezier(.34,1.56,.64,1);
 }
 
 .tile.new{
-animation:new .5s ease;
+animation:newpop .5s ease;
 }
 
-@keyframes new{
+@keyframes newpop{
 0%{transform:scale(.4)}
 50%{transform:scale(1.15)}
 100%{transform:scale(1)}
@@ -95,11 +94,11 @@ animation:new .5s ease;
 }
 
 .emoji{
-font-size:6vw;
+font-size:28px;
 }
 
 .num{
-font-size:3vw;
+font-size:14px;
 }
 
 .version{
@@ -124,13 +123,13 @@ font-size:12px;
 
 <div id="board"></div>
 
-<div class="version">v.g21</div>
+<div class="version">v.g18</div>
 
 <script>
 
 const SIZE=4
-
 let board=[]
+let tiles=[]
 let score=0
 let best=localStorage.getItem("best2048")||0
 let locked=false
@@ -186,6 +185,8 @@ let p=pos(i)
 
 c.style.left=p.x+"%"
 c.style.top=p.y+"%"
+c.style.width="22%"
+c.style.height="22%"
 
 b.appendChild(c)
 }
@@ -233,6 +234,8 @@ let p=pos(i)
 
 t.style.left=p.x+"%"
 t.style.top=p.y+"%"
+t.style.width="22%"
+t.style.height="22%"
 
 document.getElementById("board").appendChild(t)
 
@@ -306,12 +309,12 @@ setTimeout(()=>locked=false,1000)
 let startX=0
 let startY=0
 
-document.addEventListener("touchstart",e=>{
+document.getElementById("board").addEventListener("touchstart",e=>{
 startX=e.touches[0].clientX
 startY=e.touches[0].clientY
-},{passive:false})
+})
 
-document.addEventListener("touchend",e=>{
+document.getElementById("board").addEventListener("touchend",e=>{
 
 let dx=e.changedTouches[0].clientX-startX
 let dy=e.changedTouches[0].clientY-startY
@@ -322,7 +325,7 @@ if(Math.abs(dx)>20) move(dx>0?"R":"L")
 if(Math.abs(dy)>20) move(dy>0?"D":"U")
 }
 
-},{passive:false})
+})
 
 init()
 
